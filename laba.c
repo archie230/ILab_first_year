@@ -5,29 +5,36 @@
 const double l = 0.5;
 const double d = 0.00035;
 //----------------------------------------------------------------------------------------------------------------------
+const int name_Sz = 100;
 const double Tolerance = 1e-10;
 const double ns_answer = 1e-7;
 const double MinValue = 0.0;
 const double MaxValue = 1000.0;
-const char data_file[] = "labadata.txt";
-const char result_file[] = "labaresult.txt";
 //----------------------------------------------------------------------------------------------------------------------
 // author. Mulihov Arthur vk.com/0chickenmcnuggets0
 
 //прототипы функций
-void calculatelaba();
-void readdata();
-void write_laba();
-int tolerance();
+void calculatelaba(double*, double*, double*, double*, double*);
+void readdata(double*, double*, double*, int*, char*);
+void write_laba(double*, double*, double*, double*, int*, double*, char*);
+int tolerance(double*);
 //функции отвечающие за подсчет сопротивление и погрешности при помощи мнк
-double calculate_mnk();
-double calculate_delta();
-double middle_UI();
-double middle_sqrI();
-double middle_sqrU();
+double calculate_mnk(double*, double*, int*);
+double calculate_delta(double*, double*, int*);
+double middle_sqrA(double*, int*);
+double middle_UI(double*, double*, int*);
 //----------------------------------------------------------------------------------------------------------------------
 int main()
 {
+    //scanning name of files
+    char data_file[name_Sz];
+    char result_file[name_Sz];
+
+    printf("Data_file = \n");
+    gets(data_file);
+    printf("Result file = \n");
+    gets(result_file);
+
     printf("Write number of lines in your laba:\n");
     int nlines;
     scanf("%d", &nlines);
@@ -49,7 +56,7 @@ int main()
     double delta_ro = 0;
 
     // reading measurements from a file
-    readdata(I, U, R, &nlines);
+    readdata(I, U, R, &nlines, data_file);
 
     // calculation of mnk
     double mnk = calculate_mnk(I, U, &nlines);
@@ -59,7 +66,7 @@ int main()
     calculatelaba(&mnk, &delta, &Ro, &delta_ro, &epsilon);
 
     // printing final data
-    write_laba(R, &Ro, &delta_ro, &epsilon, &nlines, &delta);
+    write_laba(R, &Ro, &delta_ro, &epsilon, &nlines, &delta, result_file);
 
     free(U);
     free(I);
@@ -68,7 +75,7 @@ int main()
     return 0;
 }
 
-void readdata(double I[], double U[], double R[], int* number)
+void readdata(double I[], double U[], double R[], int* number, char* data_file)
 {
     FILE* labadata = fopen(data_file , "r");
     if (!labadata) {printf("Can't open labadata.txt\n"); return;}
@@ -101,7 +108,7 @@ void calculatelaba(double* mnk_ptr, double* delta_ptr, double* Ro, double* delta
     }
 }
 
-void write_laba(double R[], double* Ro, double* delta_ro, double* epsilon, int* number, double* delta)
+void write_laba(double R[], double* Ro, double* delta_ro, double* epsilon, int* number, double* delta, char* result_file)
 {
     FILE* labaresult = fopen(result_file , "w");
     if (!labaresult) printf("Can't open labaresult.txr\n");
@@ -118,7 +125,7 @@ void write_laba(double R[], double* Ro, double* delta_ro, double* epsilon, int* 
 double calculate_mnk(double I[], double U[], int* number)
 {
     double middleUI = middle_UI(I, U, number);
-    double middlesqrI = middle_sqrI(I, number);
+    double middlesqrI = middle_sqrA(I, number);
 
     double R = middleUI / middlesqrI;
 
@@ -127,8 +134,8 @@ double calculate_mnk(double I[], double U[], int* number)
 
 double calculate_delta(double I[], double U[], int* number)
 {
-    double middlesqrU = middle_sqrU(U, number);
-    double middlesqrI = middle_sqrI(I, number);
+    double middlesqrU = middle_sqrA(U, number);
+    double middlesqrI = middle_sqrA(I, number);
     double R = calculate_mnk(I, U, number);
 
     double delta_r = 1 / sqrt(*number);
@@ -147,20 +154,11 @@ double middle_UI(double I[], double U[], int* number)
     return (sum / *number);
 }
 
-double middle_sqrI(double I[], int* number)
+double middle_sqrA(double A[], int* number)
 {
     double sum = 0;
     for(int i = 0; i < *number; i++)
-        sum = sum + (I[i] * I[i]);
-
-    return (sum / *number);
-}
-
-double middle_sqrU(double U[], int* number)
-{
-    double sum = 0;
-    for(int i = 0; i < *number; i++)
-        sum = sum + (U[i] * U[i]);
+        sum = sum + (A[i] * A[i]);
 
     return (sum / *number);
 }
