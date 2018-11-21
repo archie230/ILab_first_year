@@ -102,8 +102,9 @@ void create_arrays(string** txt, char*** original_txt, char** buff_sym, int* N_l
 }
 //______________________________________________________________________________________________________________________
 /** \brief This func coding symbols
+ * This func using file txt file to convert letters to number
  * @param letter 
- * @return 
+ * @return number of letter or special code NotALetter = -230
  */
 
 int Ru_char_encoding(char* letter)
