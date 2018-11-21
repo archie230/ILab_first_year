@@ -102,10 +102,28 @@ void create_arrays(string** txt, char*** original_txt, char** buff_sym, int* N_l
 }
 //______________________________________________________________________________________________________________________
 /** \brief This func coding symbols
- * This func using file txt file to convert letters to number
- * @param letter 
- * @return number of letter or special code NotALetter = -230
- */
+*  Функция получает на  входе указатель на букву,
+*
+* \code
+ * if (!letter) {
+ * printf("NULL pointer in encoding");
+ * free(alph);
+* \endcode
+*
+* создадим статические переменные:int counter, char* alph, int alph_size
+* для того чтобы предотвратить подрузгку алфавита при каждом вызове функции
+* при завершении работы с функцией подадим ей нулевой указатель для очистки
+* динамической памяти
+* кусок кода из int main():
+*
+* \code
+ *char* poison = NULL;
+ *Ru_char_encoding(poison);
+* \endcode
+* 
+* @param letter
+* @return number of letter or special code NotALetter = -230
+*/
 
 int Ru_char_encoding(char* letter)
 {
