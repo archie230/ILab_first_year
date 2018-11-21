@@ -94,7 +94,7 @@ void create_arrays(string** txt, char*** original_txt, char** buff_sym, int* N_l
 /* This func coding russian alphabet
 */
 
-int Ru_char_encoding(char letter)
+int Ru_char_encoding(char* letter)
 {
     static int counter = 0;
     static char* alph = NULL;
@@ -129,7 +129,7 @@ int Ru_char_encoding(char letter)
 
     while (1)
     {
-        if (alph[i] == letter)
+        if (alph[i] == *letter)
         {
             return alph_size - i;
         }
