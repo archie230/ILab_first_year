@@ -96,24 +96,34 @@ void create_arrays(string** txt, char*** original_txt, char** buff_sym, int* N_l
 
 int Ru_char_encoding(char letter)
 {
+    static int counter = 0;
+    static char* alph = NULL;
+    static int alph_size = 0;
+
     if(!letter)
     {
         printf("NULL pointer in encoding");
+        free(alph); 
     }
 
-    FILE* alphabet = fopen("alphabet.txt", "r+");
-    if(!alphabet)
+    if (counter == 0)
     {
-        printf("can't open file with alphabet");
-        return -1;
+        FILE *alphabet = fopen("alphabet.txt", "r+");
+
+        if (!alphabet) {
+            printf("can't open file with alphabet");
+            return -1;
+        }
+
+        fseek(alphabet, 0, SEEK_END);
+        alph_size = ftell(alphabet);
+        alph = (char *) calloc(alph_size + 1, sizeof(char));
+        rewind(alphabet);
+        fread(alph, sizeof(char), alph_size, alphabet);
+
+        fclose(alphabet);
     }
-
-    fseek(alphabet, 0 , SEEK_END);
-    int alph_size = ftell(alphabet);
-    char* alph = (char*) calloc(alph_size+1, sizeof(char));
-    rewind(alphabet);
-
-    fread(alph, sizeof(char), alph_size, alphabet);
+    counter++;
 
     int i = 0;
 
@@ -129,8 +139,6 @@ int Ru_char_encoding(char letter)
         i++;
     }
 
-    fclose(alphabet);
-    free(alph);
 }
 
 
