@@ -1,5 +1,6 @@
 //______________________________________________________________________________________________________________________
-// filling text buff
+
+//filling text buff
 
 void read_txt(int* N_symbols, char** buff_sym)
 {
@@ -32,7 +33,7 @@ void read_txt(int* N_symbols, char** buff_sym)
 
     fclose(data);
 }
-
+//______________________________________________________________________________________________________________________
 /* This func counting and returning number of symbols
    in your file
 */
@@ -46,8 +47,7 @@ int counting_nsymbols(FILE* data)
 
     return N_symbols;
 }
-
-
+//______________________________________________________________________________________________________________________
 /* This func counting number of lines
    in your txtbuffer
 */
@@ -63,8 +63,7 @@ void count_nlines(int* N_lines, char** buff_sym)
     }
 
 }
-
-
+//______________________________________________________________________________________________________________________
 /* This func creating and filling array
    of structs and original_txt
 */
@@ -89,8 +88,7 @@ void create_arrays(string** txt, char*** original_txt, char** buff_sym, int* N_l
         i++;
     }
 }
-
-
+//______________________________________________________________________________________________________________________
 /* This func coding russian alphabet
 */
 
@@ -140,8 +138,7 @@ int Ru_char_encoding(char* letter)
     }
 
 }
-
-
+//______________________________________________________________________________________________________________________
 /* This func compare two strings by alphabet*/
 
 int my_strcmp(char* str1, char* str2, int (*char_encoding) (char* letter))
@@ -179,7 +176,7 @@ int my_strcmp(char* str1, char* str2, int (*char_encoding) (char* letter))
     if(*(str1) == '\0')
         return -1;
 }
-
+//______________________________________________________________________________________________________________________
 /* This func compare rwo strings by ryphm */
 
 int my_strcmp_ryphm(char* str1, char* str2, int len1, int len2, int (*char_encoding) (char* letter))
@@ -198,18 +195,17 @@ int my_strcmp_ryphm(char* str1, char* str2, int len1, int len2, int (*char_encod
     }
     return 0;
 }
-
+//______________________________________________________________________________________________________________________
 int comp_alphabet(const void* x1, const void* x2)
 {
-
     return my_strcmp((*(const string*) x1).s_ptr, (*(const string*) x2).s_ptr, Ru_char_encoding);
 }
-
+//______________________________________________________________________________________________________________________
 int comp_ryphm(const void* x1, const void* x2)
 {
     return my_strcmp_ryphm((*(const string*) x1).s_ptr, (*(const string*) x2).s_ptr, (*(const string*) x1).length, (*(const string*) x2).length, Ru_char_encoding);
 }
-
+//______________________________________________________________________________________________________________________
 void sort_andwrite(string** txt, int N_lines, int (*comp) (const void* x1, const void* x2))
 {
     FILE* out = fopen(output, "a");
@@ -235,7 +231,7 @@ void sort_andwrite(string** txt, int N_lines, int (*comp) (const void* x1, const
 
     fclose(out);
 }
-
+//______________________________________________________________________________________________________________________
 void write_originaltxt(char*** original_txt, int N_lines)
 {
     FILE* out = fopen(output, "a");
