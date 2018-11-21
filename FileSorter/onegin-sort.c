@@ -144,7 +144,7 @@ int Ru_char_encoding(char* letter)
 
 /* This func compare two strings by alphabet*/
 
-int my_strcmp(char* str1, char* str2, int (*char_encoding) (char letter))
+int my_strcmp(char* str1, char* str2, int (*char_encoding) (char* letter))
 {
     int i = 0;
 
@@ -153,16 +153,16 @@ int my_strcmp(char* str1, char* str2, int (*char_encoding) (char letter))
         str1 = str1 + i;
         str2 = str2 + i;
 
-        while(char_encoding(*str1) == NAL)
-            *str1++;
-        while(char_encoding(*str2) == NAL)
-            *str2++;
+        while(char_encoding(str1) == NAL)
+            str1++;
+        while(char_encoding(str2) == NAL)
+            str2++;
 
-        if(char_encoding(*(str1+i)) > char_encoding(*(str2+i))) {
+        if(char_encoding(str1+i) > char_encoding(str2+i)) {
             return 1;
         }
 
-        if(char_encoding(*(str1+i)) < char_encoding(*(str2+i))) {
+        if(char_encoding(str1+i) < char_encoding(str2+i)) {
             return -1;
         }
 
@@ -182,7 +182,7 @@ int my_strcmp(char* str1, char* str2, int (*char_encoding) (char letter))
 
 /* This func compare rwo strings by ryphm */
 
-int my_strcmp_ryphm(char* str1, char* str2, int len1, int len2, int (*char_encoding) (char letter))
+int my_strcmp_ryphm(char* str1, char* str2, int len1, int len2, int (*char_encoding) (char* letter))
 {
     int i = 1;
     int lenght = 0;
@@ -193,8 +193,8 @@ int my_strcmp_ryphm(char* str1, char* str2, int len1, int len2, int (*char_encod
 
     for ( i; i <= lenght; i++)
     {
-        if (char_encoding(*(str1 + len1 - i)) < char_encoding(*(str2 + len2 - i))) return -1;
-        if (char_encoding(*(str1 + len1 - i)) > char_encoding(*(str2 + len2 - i))) return 1;
+        if (char_encoding( (str1 + len1 - i) ) < char_encoding( (str2 + len2 - i) )) return -1;
+        if (char_encoding( (str1 + len1 - i) ) > char_encoding( (str2 + len2 - i) )) return 1;
     }
     return 0;
 }
