@@ -23,7 +23,9 @@ int main()
     sort_andwrite(&txt, N_lines, comp_alphabet);
     sort_andwrite(&txt, N_lines, comp_ryphm);
     write_originaltxt(&original_txt, N_lines);
-
+    
+    char* poison = NULL;
+    Ru_char_encoding(poison);
 
     free(buff_sym);
     free(txt);
