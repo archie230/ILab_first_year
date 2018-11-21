@@ -22,11 +22,11 @@ void count_nlines(int*, char**);
 
 void create_arrays(string**, char***, char**, int*);
 
-int Ru_char_encoding(char);
+int Ru_char_encoding(char*);
 
-int my_strcmp(char*, char*, int (*char_encoding) (char));
+int my_strcmp(char*, char*, int (*char_encoding) (char*));
 
-int my_strcmp_ryphm(char*, char*, int, int, int (*char_encoding) (char));
+int my_strcmp_ryphm(char*, char*, int, int, int (*char_encoding) (char*));
 
 int comp_alphabet(const void*, const void*);
 
