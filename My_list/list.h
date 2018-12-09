@@ -4,7 +4,6 @@
 
 #define POISON -100500
 
-//#define List_Fast
 
 const int can = 230;
 const int OK = 1;
@@ -13,7 +12,6 @@ const int ERR_can1    = -22;
 const int ERR_can2    = -33;
 const int ERR_chcksum = -44;
 const int ERR_index   = -3;
-const int ERR_headtail= -2;
 //----------------------------------------------------------------------------------------------------------------------
 
 typedef struct Node{
