@@ -1,4 +1,4 @@
-//______________________________________________________________________________________________________________________
+\\______________________________________________________________________________________________________________________________________
 List* List_createlist()
 {
     List* list = new List;
@@ -23,10 +23,16 @@ List* List_createlist()
     Node_FillingCHECKSM(list -> tail);
 #endif
     list -> nodes_number = 0;
+
+    if(List_ok(list) < 0){
+        printf("Cant create list!\n");
+        return NULL;
+    }
+
     return list;
 }
 
-Node* Node_createnode(int value)
+void* Node_createnode(int value)
 {
     Node* node = new Node;
 
@@ -49,18 +55,24 @@ void List_insertafter(Node* currptr, int data, List* list)
         return;
     }
 
+    if(Node_ok(currptr) < 0)
+    {
+        printf("Currptr not ok in insertion func!\n");
+        return;
+    }
+
     if(currptr == list -> tail)
     {
         printf("CAN'T INSERT AFTER TAIL\n");
         return;
     }
 
-    Node* node_ins = Node_createnode(data);
+    Node* node_ins = (Node*) Node_createnode(data);
 
 
     if(list -> nodes_number == 0)
     {
-        printf("Zero nodes in your list before insertion\n");
+        printf("Zero nodes in your list before insertion!\n");
 
         list -> head -> next = node_ins;
         list -> tail -> prev = node_ins;
@@ -98,7 +110,7 @@ void List_insertafter(Node* currptr, int data, List* list)
 #endif
         if(Node_ok(node_ins) < 0)
         {
-            printf("Node not ok after insertion in insertion func");
+            printf("Node not ok after insertion in insertion func!");
             return;
         }
         return;
@@ -133,19 +145,19 @@ void List_swipe_currptr_right(Node** currptr_ptr, List* list)
 
     if(Node_ok(*currptr_ptr) < 0)
     {
-        printf("Node not ok in swipe ptr func\n");
+        printf("Node not ok in swipe ptr func!\n");
         return;
     }
 
     if (list -> nodes_number == 0)
     {
-        printf("Can't swipe currptr in list with 0 elements\n");
+        printf("Can't swipe currptr in list with 0 elements!\n");
         return;
     }
 
     if ((*currptr_ptr) -> next == NULL)
     {
-        printf("Current element is tail, can't swipe pointer to right\n");
+        printf("Current element is tail, can't swipe pointer to right!\n");
         return;
     }
 
@@ -187,7 +199,7 @@ void List_swipe_currptr_left(Node** currptr_ptr, List* list)
     (*currptr_ptr) = (*currptr_ptr) -> prev;
 }
 
-Node* List_search(List* list, int value)
+void* List_search(List* list, int value)
 {
     if(list == NULL)
     {
@@ -210,8 +222,9 @@ Node* List_search(List* list, int value)
     return NULL;
 }
 
-int Node_index(List* list, Node* node)
+int Node_index(List* list, void* node)
 {
+    node = (Node*) node;
     int index = 1;
     Node* cur = list -> head;
     for(index = 1; index <= list -> nodes_number; index++)
@@ -270,12 +283,6 @@ int Node_ok(Node* node)
         return ERR_NULLptr;
     }
 
-    if(node -> data == POISON)
-    {
-        printf("HEAD or TAIL in the Node_ok function\n");
-        return ERR_headtail;
-    }
-
 #ifndef List_Fast
     if(node -> can1 != can)
     {
@@ -327,7 +334,7 @@ int List_ok(List* list)
         printf("ERR_checksum\n");
         return ERR_chcksum;
     }
-//______________________________________________________________________________________________________________________
+
     if(list -> tail -> can1 != can)
     {
         printf("ERR_can1\n");
