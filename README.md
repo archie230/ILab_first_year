@@ -1,2 +1,3 @@
-# ILab-course
-ilab course 2018-19
+# Some projects :)
+
+Course 2018-19
