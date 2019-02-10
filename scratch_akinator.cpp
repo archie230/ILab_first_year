@@ -13,6 +13,7 @@
 using std::cout;
 using std::cin;
 using std::endl;
+using std::getline;
 
 //_______________
 
@@ -89,39 +90,39 @@ public:
 
                 cout << "Enter negative answer:" << endl;
                 std::string info_n;
-                cin >> info_n;
+                getline(cin, info_n);
 
                 cout << "Enter positive answer:" << endl;
                 std::string info_p;
-                cin >> info_p;
+                getline(cin, info_p);
 
-                root_->left_ = new Node(info_n);
+                root_ -> left_ = new Node(info_n);
                 Nplus
-                root_->left_->parent_ = root_;
+                root_ -> left_ -> parent_ = root_;
 
-                root_->right_ = new Node(info_p);
+                root_ -> right_ = new Node(info_p);
                 Nplus
-                root_->right_->parent_ = root_;
+                root_ -> right_ -> parent_ = root_;
                 break;
             }
 
             default: {
-                current->info_ = info;
+                current -> info_ = info;
 
                 cout << "Enter negative answer:" << endl;
                 std::string info_neg;
-                cin >> info_neg;
+                getline(cin, info_neg);
 
                 cout << "Enter positive answer:" << endl;
                 std::string info_pos;
-                cin >> info_pos;
+                getline(cin, info_pos);
 
-                current->left_ = new Node(info_neg);
-                current->left_->parent_ = current;
+                current -> left_ = new Node(info_neg);
+                current -> left_ -> parent_ = current;
                 Nplus
 
-                current->right_ = new Node(info_pos);
-                current->right_->parent_ = current;
+                current -> right_ = new Node(info_pos);
+                current -> right_ -> parent_ = current;
                 Nplus
             }
         }
@@ -149,16 +150,17 @@ public:
         {
                 cout << node -> info_ << "?" << endl;
 
-                int answer = getchar();
+                std::string answer;
+                getline(cin, answer);
 
-                if(answer == 'n')
+                if(answer == "no")
                 node = node -> left_;
 
-                if(answer == 'y')
+                if(answer == "yes")
                 node =  node -> right_;
         }
 
-        cout << node -> info_ << endl;
+        cout << "It's" << node -> info_ << endl;
         return node;
     }
 
@@ -199,7 +201,7 @@ public:
         {
             cout << "Enter first question:" << endl;
             std::string info;
-            cin >> info;
+            getline(cin, info);
 
             tree_ -> SmartPush(info, cur_node);
 
@@ -209,27 +211,25 @@ public:
         else {
             cout << "Am i right?" << endl;
 
-            int answer = getchar();
+            std::string answer;
+            getline(cin, answer);
 
-            if (answer == 'y')
+            if (answer == "yes")
                 cout << "excellent!" << endl;
 
-            if (answer == 'n') {
-                cout << "What is difference?" << endl;
-                std::string info;
-                cin >> info;
+            if (answer == "no") {
+                cout << "What is difference?:" << endl;
 
-                tree_->SmartPush(info, cur_node);
+                std::string info;
+                getline(cin, info);
+
+
+                tree_ -> SmartPush(info, cur_node);
             }
         }
 
         cout << "==========" << endl;
     }
-
-
-
-
-
 };
 
     int main()
@@ -257,23 +257,12 @@ public:
 
         delete main_tree;*/
 
+
         GameManager* gm = new GameManager;
 
-
         gm -> PlayGame();
-
         gm -> PlayGame();
-
         gm -> PlayGame();
-
-
-
-
-
-
-
-
-
 
         delete gm;
         return 0;
