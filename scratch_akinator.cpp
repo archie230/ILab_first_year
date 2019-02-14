@@ -2,11 +2,13 @@
 #include <cstdio>
 #include <iostream>
 #include <string>
+#include <ctime>
 
 //____DEFINES____
 
 #define Nplus nodes_num_++;
 #define POISON -230
+
 
 //_______________
 
@@ -22,7 +24,6 @@ class GameManager;
 
 //___Modules_____
 class Node {
-public:
 //___Internals___
     std::string info_;
     Node* left_;
@@ -31,13 +32,15 @@ public:
 
 //___Methods_____
 public:
+
     //___Node CTOR__
-    Node(std::string info):
+    explicit Node(std::string info):
     info_(info),
     left_(NULL),
     right_(NULL),
     parent_(NULL)
     {}
+
 
     //___Node DTOR__
     ~Node(){
@@ -66,12 +69,13 @@ public:
         }
     }
 
-public:
+
     //___Tree CTOR___
-    BinaryTree():
+    explicit BinaryTree():
     root_(NULL),
     nodes_num_(0)
     {}
+
 
     //___Tree DTOR___
     ~BinaryTree() {
@@ -128,6 +132,7 @@ public:
         }
     }
 
+
     void Clear()
     {
         if (root_ != NULL) {
@@ -138,6 +143,7 @@ public:
 
         nodes_num_ = 0;
     }
+
 
     Node* Ask(Node* node)
     {
@@ -154,15 +160,124 @@ public:
                 getline(cin, answer);
 
                 if(answer == "no")
-                node = node -> left_;
+                    node = node -> left_;
 
                 if(answer == "yes")
-                node =  node -> right_;
+                    node =  node -> right_;
+
         }
 
-        cout << "It's" << node -> info_ << endl;
+        cout << "It's " << node -> info_ << endl;
+        
         return node;
     }
+
+
+    void Save(){
+
+        cout << "Enter name of file in .txt format:" << endl;
+        std::string file_name;
+        getline(cin, file_name);
+
+        FILE* tree_write = fopen(file_name.c_str(), "wb");
+        Write(tree_write, root_);
+        fclose(tree_write);
+
+    }
+
+
+    void Write(FILE* file, Node* node)
+    {
+        char open = '[';
+        char space = ' ';
+        char N = 'N';
+        char close = ']';
+
+        fwrite(&open, sizeof(char), 1, file);
+
+        short size = node -> info_.size();
+
+        fwrite(&size, sizeof(short), 1, file);
+
+        fwrite(node -> info_.data(), sizeof(char), size, file);
+
+        //__left tree__
+        if(node -> left_ != NULL){
+            fwrite(&space, sizeof(char), 1, file);
+            Write(file, node -> left_);
+        }
+
+        else{
+            fwrite(&N, sizeof(char), 1, file);
+        }
+
+        //__right tree__
+        if(node -> right_ != NULL){
+            fwrite(&space, sizeof(char), 1, file);
+            Write(file, node -> right_);
+        }
+
+        else{
+            fwrite(&N, sizeof(char), 1, file);
+        }
+
+        fwrite(&close, sizeof(char), 1, file);
+    }
+
+
+    void Restore()
+    {
+        cout << "Enter name of file in .txt format:" << endl;
+        std::string file_name;
+        getline(cin, file_name);
+
+        FILE* tree_read = fopen(file_name.c_str(), "rb");
+
+        if(!tree_read){
+            cout << "Can't open " << file_name << "!" << endl;
+        }
+
+        root_ = Read(tree_read, root_, NULL);
+        if(root_ == NULL)
+            cout << "File isn't correct";
+
+        fclose(tree_read);
+    }
+
+
+    Node* Read(FILE* file, Node* node, Node* parent)
+    {
+        if(fgetc(file) == '[')
+        {
+            short len = 0;
+            fread(&len, 1 , sizeof(short), file);
+
+            std::string info(len, '\0');
+            fread(&info[0], len, sizeof(char), file);
+
+            node = new Node(info);
+            node -> parent_ = parent;
+
+            if(fgetc(file) == ' ')
+            {
+                node -> left_ = Read(file, node -> left_, node);
+            }
+
+            if(fgetc(file) == ' ')
+            {
+                node -> right_ = Read(file, node -> right_, node);
+            }
+
+            fgetc(file);
+
+            return node;
+        }
+
+        else return NULL;
+    }
+
+
+
 
 
 
@@ -179,19 +294,21 @@ public:
 
 public:
     //___GM CTOR_____
-    GameManager():
+    explicit GameManager(): // допилить меню
     tree_(NULL)
     {
         tree_ = new BinaryTree;
 
-        cout << "//Akinator v1.0." << endl << "\t" << "author: archie230//" << endl;
+        cout << "//Akinator v1.0." << endl << "\t" << "author: @archie230//" << endl;
     }
+
 
     //___GM DTOR_____
     ~GameManager()
     {
         delete tree_;
     }
+
 
     void PlayGame()
     {
@@ -230,40 +347,36 @@ public:
 
         cout << "==========" << endl;
     }
+
+
+    void Restore()
+    {
+        tree_ -> Restore();
+    }
+
+
+    void doAkinator()
+    {
+
+    }
+
+
+
 };
 
     int main()
     {
         setlocale(LC_ALL, "Rus");
 
-
-        /*BinaryTree *main_tree = new BinaryTree;
-        std::string test1, test2;
-
-        cin >> test1;
-        main_tree->SmartPush(test1, NULL);
-
-        cout << "info for left node";
-        cin >> test2;
-        main_tree->SmartPush(test2, main_tree->root_->left_);
-
-        cout << main_tree -> root_ -> info_ << "?";
-
-        cout << "\t" <<  main_tree -> root_ -> left_ -> info_<< "?";
-        cout << "\t" <<  main_tree -> root_ -> left_ -> right_ -> info_;
-        cout << "\t" <<  main_tree -> root_ -> left_ -> left_ -> info_;
-
-        cout << main_tree -> root_ -> right_ -> info_;
-
-        delete main_tree;*/
-
-
         GameManager* gm = new GameManager;
 
-        gm -> PlayGame();
-        gm -> PlayGame();
+        gm -> tree_ -> Restore();
+
         gm -> PlayGame();
 
         delete gm;
+
+
+
         return 0;
     }
