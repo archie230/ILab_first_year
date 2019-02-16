@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string>
 #include <ctime>
+#include <cmath>
 #include "str_switch.h"
 
 //____DEFINES____
@@ -49,7 +50,7 @@ public:
     }
 
     friend BinaryTree;
-
+    friend GameManager;
 };
 
 class BinaryTree {
@@ -109,21 +110,19 @@ class BinaryTree {
             }
 
             default: {
+                std::string old_info = current -> info_;
+
                 current -> info_ = info;
 
-                cout << "Enter negative answer:" << endl;
-                std::string info_neg;
-                getline(cin, info_neg);
+                cout << "So, who is that?" << endl;
+                std::string info_p;
+                getline(cin, info_p);
 
-                cout << "Enter positive answer:" << endl;
-                std::string info_pos;
-                getline(cin, info_pos);
-
-                current -> left_ = new Node(info_neg);
+                current -> left_ = new Node(old_info);
                 current -> left_ -> parent_ = current;
                 Nplus
 
-                current -> right_ = new Node(info_pos);
+                current -> right_ = new Node(info_p);
                 current -> right_ -> parent_ = current;
                 Nplus
             }
@@ -139,51 +138,6 @@ class BinaryTree {
 
         nodes_num_ = 0;
         root_ = NULL;
-    }
-
-
-    Node* Ask(Node* node)
-    {
-        if(!node)
-        {
-            return NULL;
-        }
-
-        while(((node -> left_) != NULL) & ((node -> right_ ) != NULL))
-        {
-                cout << node -> info_ << "?" << endl;
-
-                std::string answer;
-                getline(cin, answer);
-
-                if(answer == "no")
-                    node = node -> left_;
-
-                if(answer == "yes")
-                    node =  node -> right_;
-
-                if(answer == "idk")
-                {
-                    srand(time(NULL));
-
-                    int a = rand() % 2 + 1;
-
-                    if(a == 1)
-                    {
-                        node = node -> right_;
-                    }
-
-                    else
-                    {
-                        node = node -> left_;
-                    }
-                }
-
-        }
-
-        cout << "It's " << node -> info_ << endl;
-
-        return node;
     }
 
 
@@ -252,8 +206,12 @@ class BinaryTree {
         }
 
         root_ = Read(tree_read, root_, NULL);
+
         if(root_ == NULL)
             cout << "File isn't correct";
+
+        int deep = Deepness();
+        nodes_num_ = (int) pow(2, deep) - 1;
 
         fclose(tree_read);
     }
@@ -290,9 +248,19 @@ class BinaryTree {
         else return NULL;
     }
 
+    int Deepness()
+    {
+        Node* node = root_;
+        int counter = 1;
 
+        while((node -> left_ != NULL) || (node -> right_ != NULL))
+        {
+            node = node -> left_;
+            counter++;
+        }
 
-
+        return counter;
+    }
 
 
 friend GameManager;
@@ -300,7 +268,6 @@ friend GameManager;
 
 class GameManager{
 //___Internals___
-
 
     BinaryTree* tree_;
 
@@ -324,9 +291,54 @@ public:
     }
 
 
+    Node* Ask(Node* node)
+    {
+        if(!node)
+        {
+            return NULL;
+        }
+
+        while(((node -> left_) != NULL) & ((node -> right_ ) != NULL))
+        {
+            cout << node -> info_ << "?" << endl;
+
+            std::string answer;
+            getline(cin, answer);
+
+            if(answer == "no")
+                node = node -> left_;
+
+            if(answer == "yes")
+                node =  node -> right_;
+
+            if(answer == "idk")
+            {
+                srand(time(NULL));
+
+                int a = rand() % 2 + 1;
+
+                if(a == 1)
+                {
+                    node = node -> right_;
+                }
+
+                else
+                {
+                    node = node -> left_;
+                }
+            }
+
+        }
+
+        cout << "It's " << node -> info_ << endl;
+
+        return node;
+    }
+
+
     void PlayGame()
     {
-        Node* cur_node = tree_ -> Ask(tree_ -> root_);
+        Node* cur_node = Ask(tree_ -> root_);
 
         if(!cur_node)
         {
@@ -354,7 +366,6 @@ public:
                 std::string info;
                 getline(cin, info);
 
-
                 tree_ -> SmartPush(info, cur_node);
             }
         }
@@ -373,7 +384,7 @@ public:
     {
         cout << "Enter [Help] for menu" << endl;
         std::string command;
-        
+
         while(true)
         {
             getline(cin, command);
@@ -386,6 +397,7 @@ public:
                      << "\t" << "[Play] to start game" << endl\
                      << "\t" << "[Save] to save your tree to the file" << endl\
                      << "\t" << "[Restore] to restore your tree from binary .txt file" << endl\
+                     << "\t" << "[Clear] to clear tree" << endl\
                      << "\t" << "[Quit] to end the game" << endl;
                     break;
 
@@ -402,6 +414,9 @@ public:
                 CASE("Restore"):
                     tree_ -> Restore();
                     break;
+                    
+                CASE("Cleare"):
+                    tree_ -> Clear();
 
 
                 CASE("Quit"):
@@ -416,10 +431,13 @@ public:
                      << "\t" << "[Play] to start game" << endl\
                      << "\t" << "[Save] to save your tree to the file" << endl\
                      << "\t" << "[Restore] to restore your tree from binary .txt file" << endl\
+                     << "\t" << "[Clear] to clear tree" << endl\
                      << "\t" << "[Quit] to end the game" << endl;
             }
         }
       }
+
+
 };
 
     int main()
