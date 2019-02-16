@@ -3,27 +3,25 @@
 #include <iostream>
 #include <string>
 #include <ctime>
+#include "str_switch.h"
 
 //____DEFINES____
-
 #define Nplus nodes_num_++;
 #define POISON -230
 
-
 //_______________
-
 using std::cout;
 using std::cin;
 using std::endl;
 using std::getline;
 
 //_______________
-
 class BinaryTree;
 class GameManager;
 
 //___Modules_____
 class Node {
+
 //___Internals___
     std::string info_;
     Node* left_;
@@ -55,7 +53,7 @@ public:
 };
 
 class BinaryTree {
-public:
+
 //___Internals___
     Node *root_;
     int nodes_num_;
@@ -136,12 +134,11 @@ public:
     void Clear()
     {
         if (root_ != NULL) {
-            Delete(root_->left_);
-            Delete(root_->right_);
-            delete root_;
+            Delete(root_);
         }
 
         nodes_num_ = 0;
+        root_ = NULL;
     }
 
 
@@ -165,10 +162,27 @@ public:
                 if(answer == "yes")
                     node =  node -> right_;
 
+                if(answer == "idk")
+                {
+                    srand(time(NULL));
+
+                    int a = rand() % 2 + 1;
+
+                    if(a == 1)
+                    {
+                        node = node -> right_;
+                    }
+
+                    else
+                    {
+                        node = node -> left_;
+                    }
+                }
+
         }
 
         cout << "It's " << node -> info_ << endl;
-        
+
         return node;
     }
 
@@ -188,7 +202,7 @@ public:
 
     void Write(FILE* file, Node* node)
     {
-        char open = '[';
+        char open = '['; // const
         char space = ' ';
         char N = 'N';
         char close = ']';
@@ -287,7 +301,7 @@ friend GameManager;
 class GameManager{
 //___Internals___
 
-public:
+
     BinaryTree* tree_;
 
 //___Methods_____
@@ -355,13 +369,57 @@ public:
     }
 
 
-    void doAkinator()
+   void doAkinator()
     {
+        cout << "Enter [Help] for menu" << endl;
+        std::string command;
+        
+        while(true)
+        {
+            getline(cin, command);
 
-    }
+            SWITCH (command)
+            {
+                CASE("Help"):
+                    cout << "Enter:" << endl\
+                     << "\t" << "[Help] for menu" << endl\
+                     << "\t" << "[Play] to start game" << endl\
+                     << "\t" << "[Save] to save your tree to the file" << endl\
+                     << "\t" << "[Restore] to restore your tree from binary .txt file" << endl\
+                     << "\t" << "[Quit] to end the game" << endl;
+                    break;
 
 
+                CASE("Play"):
+                    PlayGame();
+                    break;
 
+                CASE("Save"):
+                    tree_ -> Save();
+                    break;
+
+
+                CASE("Restore"):
+                    tree_ -> Restore();
+                    break;
+
+
+                CASE("Quit"):
+                    cout << "Arividerci!" << endl;
+                    return;
+
+
+                DEFAULT:
+
+                    cout << "Enter:" << endl\
+                     << "\t" << "[Help] for menu" << endl\
+                     << "\t" << "[Play] to start game" << endl\
+                     << "\t" << "[Save] to save your tree to the file" << endl\
+                     << "\t" << "[Restore] to restore your tree from binary .txt file" << endl\
+                     << "\t" << "[Quit] to end the game" << endl;
+            }
+        }
+      }
 };
 
     int main()
@@ -370,13 +428,8 @@ public:
 
         GameManager* gm = new GameManager;
 
-        gm -> tree_ -> Restore();
-
-        gm -> PlayGame();
+        gm -> doAkinator();
 
         delete gm;
-
-
-
         return 0;
     }
