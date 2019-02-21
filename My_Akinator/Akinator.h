@@ -1,6 +1,7 @@
 //
 // Created by archie230
 //
+#pragma once
 
 #include <cstdlib>
 #include <cstdio>
