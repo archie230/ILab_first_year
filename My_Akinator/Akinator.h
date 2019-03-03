@@ -67,8 +67,8 @@ class BinaryTree {
         }
     }
 
-public:
 //--------------------------
+public:
     //___Tree CTOR___
     explicit BinaryTree():
     root_(NULL)
@@ -81,43 +81,15 @@ public:
     }
 //--------------------------
 
-private:
-    void SmartPush(std::string info, Node* current) {
+    Node* getroot()
+    {
+        return root_;
+    }
 
-        if(!current){
-                Node *node = new Node(info);
-                root_ = node;
 
-                cout << "Enter negative answer:" << endl;
-                std::string info_n;
-                getline(cin, info_n);
-
-                cout << "Enter positive answer:" << endl;
-                std::string info_p;
-                getline(cin, info_p);
-
-                root_ -> left_ = new Node(info_n);
-                root_ -> left_ -> parent_ = root_;
-
-                root_ -> right_ = new Node(info_p);
-                root_ -> right_ -> parent_ = root_;
-            }
-
-            if(current){
-                std::string old_info = current -> info_;
-
-                current -> info_ = info;
-
-                cout << "So, who is that?" << endl;
-                std::string info_p;
-                getline(cin, info_p);
-
-                current -> left_ = new Node(old_info);
-                current -> left_ -> parent_ = current;
-
-                current -> right_ = new Node(info_p);
-                current -> right_ -> parent_ = current;
-            }
+    void setroot(Node* root)
+    {
+        root_ = root;
     }
 
 
@@ -128,19 +100,6 @@ private:
         }
 
         root_ = NULL;
-    }
-
-
-    void Save(){
-
-        cout << "Enter name of file in .txt format:" << endl;
-        std::string file_name;
-        getline(cin, file_name);
-
-        FILE* tree_write = fopen(file_name.c_str(), "wb");
-        Write(tree_write, root_);
-        fclose(tree_write);
-
     }
 
 
@@ -180,29 +139,6 @@ private:
         }
 
         fwrite(&close, sizeof(char), 1, file);
-    }
-
-
-    void Restore()
-    {
-        cout << "Enter name of file in .txt format:" << endl;
-        std::string file_name;
-        getline(cin, file_name);
-
-        FILE* tree_read = fopen(file_name.c_str(), "rb");
-
-        if(!tree_read){
-            cout << "Can't open " << file_name << "!" << endl;
-            return;
-        }
-
-        Clear();
-        root_ = Read(tree_read, root_, NULL);
-
-        if(root_ == NULL)
-            cout << "File isn't correct";
-
-        fclose(tree_read);
     }
 
 
@@ -293,10 +229,6 @@ private:
         return way;
     }
 
-
-
-
-friend GameManager;
 };
 
 class GameManager{
@@ -349,9 +281,48 @@ public:
     }
 
 
+    void SmartPush(std::string info, Node* current) {
+
+        if(!current){
+            Node *node = new Node(info);
+            tree_ -> setroot(node);
+
+            cout << "Enter negative answer:" << endl;
+            std::string info_n;
+            getline(cin, info_n);
+
+            cout << "Enter positive answer:" << endl;
+            std::string info_p;
+            getline(cin, info_p);
+
+            tree_ -> getroot() -> left_ = new Node(info_n);
+            tree_ -> getroot() -> left_ -> parent_ = tree_ -> getroot();
+
+            tree_ -> getroot() -> right_ = new Node(info_p);
+            tree_ -> getroot() -> right_ -> parent_ = tree_ -> getroot();
+        }
+
+        if(current){
+            std::string old_info = current -> info_;
+
+            current -> info_ = info;
+
+            cout << "So, who is that?" << endl;
+            std::string info_p;
+            getline(cin, info_p);
+
+            current -> left_ = new Node(old_info);
+            current -> left_ -> parent_ = current;
+
+            current -> right_ = new Node(info_p);
+            current -> right_ -> parent_ = current;
+        }
+    }
+
+
     void PlayGame()
     {
-        Node* cur_node = Ask(tree_ -> root_);
+        Node* cur_node = Ask(tree_ -> getroot());
 
         if(!cur_node)
         {
@@ -359,7 +330,7 @@ public:
             std::string info;
             getline(cin, info);
 
-            tree_ -> SmartPush(info, cur_node);
+            SmartPush(info, cur_node);
 
             return;
         }
@@ -380,7 +351,7 @@ public:
                 std::string info;
                 getline(cin, info);
 
-                tree_ -> SmartPush(info, cur_node);
+                SmartPush(info, cur_node);
             }
         }
 
@@ -390,10 +361,37 @@ public:
 
     void Restore()
     {
-        if(tree_)
-            tree_ -> Clear();
+        cout << "Enter name of file in .txt format:" << endl;
+        std::string file_name;
+        getline(cin, file_name);
 
-        tree_ -> Restore();
+        FILE* tree_read = fopen(file_name.c_str(), "rb");
+
+        if(!tree_read){
+            cout << "Can't open " << file_name << "!" << endl;
+            return;
+        }
+
+        tree_ -> Clear();
+        tree_ -> setroot(tree_ -> Read(tree_read, tree_ -> getroot(), NULL));
+
+        if(tree_ -> getroot() == NULL)
+            cout << "File isn't correct";
+
+        fclose(tree_read);
+    }
+
+
+    void Save(){
+
+        cout << "Enter name of file in .txt format:" << endl;
+        std::string file_name;
+        getline(cin, file_name);
+
+        FILE* tree_write = fopen(file_name.c_str(), "wb");
+        tree_ -> Write(tree_write, tree_ -> getroot());
+        fclose(tree_write);
+
     }
 
 
@@ -407,10 +405,10 @@ public:
         cout << "Enter second object:" << endl;
         getline(cin, object2);
 
-        Node* nemo1 = tree_ -> PreSearch(object1, tree_ -> root_);
+        Node* nemo1 = tree_ -> PreSearch(object1, tree_ -> getroot());
         int deep1 = tree_ -> NodeDeepness(nemo1);
 
-        Node* nemo2 = tree_ -> PreSearch(object2, tree_ -> root_);
+        Node* nemo2 = tree_ -> PreSearch(object2, tree_ -> getroot());
         int deep2 = tree_ -> NodeDeepness(nemo2);
 
         if(!nemo1){
@@ -423,8 +421,8 @@ public:
             return;
         }
 
-        Node** way1 = tree_ -> WayToNemo(tree_ -> PreSearch(object1, tree_ -> root_));
-        Node** way2 = tree_ -> WayToNemo(tree_ -> PreSearch(object2, tree_ -> root_));
+        Node** way1 = tree_ -> WayToNemo(nemo1);
+        Node** way2 = tree_ -> WayToNemo(nemo2);
 
         int min_deep = std::min(deep1, deep2);
 
@@ -482,7 +480,7 @@ public:
             for(int i = min_deep - 1; i < deep1; i++){
 
                 if(way1[i] -> left_ == way1[i+1])
-                    cout << "Not" << way1[i] -> info_ << " ";
+                    cout << "Not " << way1[i] -> info_ << " ";
 
                 if(way1[i] -> right_ == way1[i+1])
                     cout << way1[i] -> info_ << " ";
@@ -507,7 +505,10 @@ public:
 
 
         delete [] way1;
+        way1 = NULL;
+
         delete [] way2;
+        way2 = NULL;
     }
 
 
@@ -518,7 +519,7 @@ public:
          std::string object;
          getline(cin, object);
 
-         Node* nemo = tree_ -> PreSearch(object, tree_ -> root_);
+         Node* nemo = tree_ -> PreSearch(object, tree_ -> getroot());
 
          if(!nemo){
              cout << "can't find" << object << endl;
@@ -574,14 +575,14 @@ public:
                     break;
 
                 CASE("Save"):
-                    tree_ -> Save();
+                    Save();
                     break;
 
                 CASE("Restore"):
-                    tree_ -> Restore();
+                    Restore();
                     break;
 
-                CASE("Clear"):
+                CASE("Cleare"):
                     tree_ -> Clear();
 
                 CASE("Descrpt"): {
