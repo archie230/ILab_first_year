@@ -24,9 +24,9 @@ class my_stack {
 public:
 //___CTOR___
     my_stack() :
-            array_(nullptr),
-            size_(0),
-            capacity_(0)
+        array_(nullptr),
+        size_(0),
+        capacity_(0)
     {}
 
 //___DTOR___
