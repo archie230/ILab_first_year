@@ -40,6 +40,15 @@ public:
     }
 
 //___FUNCS___
+    int size()
+    {
+        return size_;
+    }
+    
+    int capacity()
+    {
+        return capacity_;
+    } 
 
     void push(T elem)
     {
