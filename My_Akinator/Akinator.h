@@ -355,7 +355,7 @@ public:
             }
         }
 
-        cout << "==========" << endl;
+        cout << "End of the game!" << endl;
     }
 
 
