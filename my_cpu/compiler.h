@@ -1,18 +1,82 @@
-#pragma once
 #include <iostream>
 #include <vector>
 #include <cmath>
 #include <string>
+#include <map>
+
+enum FUNC
+{
+    PUSH = 1,
+    POP,
+    OUT,
+    MUL,
+    DIV,
+    ADD,
+    SUB,
+    JMP
+};
+
+enum REG
+{
+    AX,
+    BX,
+    CX,
+    DX
+};
+
+enum ARGS
+{
+    NTHNG, //nothing
+    NMBR, //number
+    REG, //register
+    L, //label
+};
+
+class maps
+{
+public:
+    std::map<std::string, int> FuncMap;
+    std::map<std::string, int> RegMap;
+
+    maps()
+    {
+        FuncMapFilling();
+        RegMapFilling();
+    }
+
+    void FuncMapFilling()
+    {
+        FuncMap.emplace("push", FUNC::PUSH);
+        FuncMap.emplace("pop", FUNC::POP);
+        FuncMap.emplace("out", FUNC::OUT);
+        FuncMap.emplace("mul", FUNC::MUL);
+        FuncMap.emplace("div", FUNC::DIV);
+        FuncMap.emplace("add", FUNC::ADD);
+        FuncMap.emplace("sub", FUNC::SUB);
+        FuncMap.emplace("jump", FUNC::JMP);
+    }
+
+    void RegMapFilling()
+    {
+        RegMap.emplace("ax", REG::AX);
+        RegMap.emplace("bx", REG::BX);
+        RegMap.emplace("cx", REG::CX);
+        RegMap.emplace("dx", REG::DX);
+    }
+};
 
 class compiler{
 public:
 
     std::string buf_;
     std::vector<std::string>* tokenbuf_;
+    maps my_maps;
+
 
     compiler():
-            buf_(),
-            tokenbuf_(nullptr)
+    buf_(),
+    tokenbuf_(nullptr),
+    my_maps()
     {}
 
     ~compiler()
@@ -60,12 +124,12 @@ public:
         while(i < buf_.size())
         {
             while (((buf_[i] == ' ') || (buf_[i] == '\n')) && (i < buf_.size()))
-                i++;
+                ++i;
 
             while((buf_[i] != ' ') && (buf_[i] != '\n') && (buf_[i] != ';') && (i < buf_.size()))
             {
                 token.push_back(buf_[i]);
-                i++;
+                ++i;
             }
 
             if(token.empty() == 0)
@@ -77,11 +141,17 @@ public:
             if((buf_[i] == ';') && (i < buf_.size()))
             {
                 while(buf_[i] != '\n')
-                    i++;
+                    ++i;
 
-                i++;
+                ++i;
             }
         }
+    }
+
+    void Translation() // по карте создает структурки с флажком что это\
+                                                                       функция, перменная, регистр
+    {
+
     }
 
 };
