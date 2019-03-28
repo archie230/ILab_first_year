@@ -4,6 +4,9 @@
 #include <string>
 #include <map>
 
+const int POISON = -230;
+
+//-------------------//
 enum FUNC
 {
     PUSH = 1,
@@ -31,6 +34,57 @@ enum ARGS
     REG, //register
     L, //label
 };
+//-------------------//
+
+int string_to_int(std::string str, int& flag) // протестить перевод из строки в число!!!!!
+{
+    int temp = 0;
+    int sign = 0; // 0 if temp > 0, 1 if temp < 0
+    int i = 0;
+
+    if(str[i] == '-'){
+        sign = 1;
+        ++i;
+    }
+
+    while(i < str.size())
+    {
+        if((str[i] < '0') || (str[i] > '9'))
+        {
+            flag = 1;
+            return POISON;
+        }
+
+        temp += (str[i] & 0x0F);
+        temp = temp * 10;
+        ++i;
+    }
+
+    temp = temp / 10;
+
+    if(sign == 1)
+        temp = -temp;
+
+    return temp;
+}
+
+
+class transtoken{
+public:
+    char tokentype_;
+    int param_;
+
+    transtoken(char tokentype, int param):
+    tokentype_(tokentype),
+    param_(param)
+    {}
+
+    void set(char tokentype, int param)
+    {
+        tokentype_ = tokentype;
+        param_ = param;
+    }
+};
 
 class maps
 {
@@ -44,48 +98,54 @@ public:
         RegMapFilling();
     }
 
+
+
+#define CHCKEMPLACE(str, const, Mapname)\
+                                         if( Mapname##Map.emplace(str, const).second != true)\
+                                                    {printf("can't emplace in func %s, line %d",\
+                                                             __PRETTY_FUNCTION__, __LINE__);  return;}
+
     void FuncMapFilling()
     {
-        FuncMap.emplace("push", FUNC::PUSH);
-        FuncMap.emplace("pop", FUNC::POP);
-        FuncMap.emplace("out", FUNC::OUT);
-        FuncMap.emplace("mul", FUNC::MUL);
-        FuncMap.emplace("div", FUNC::DIV);
-        FuncMap.emplace("add", FUNC::ADD);
-        FuncMap.emplace("sub", FUNC::SUB);
-        FuncMap.emplace("jump", FUNC::JMP);
+        CHCKEMPLACE("push", FUNC::PUSH, Func);
+        CHCKEMPLACE("pop", FUNC::POP, Func);
+        CHCKEMPLACE("out", FUNC::OUT, Func);
+        CHCKEMPLACE("mul", FUNC::MUL, Func);
+        CHCKEMPLACE("div", FUNC::DIV, Func);
+        CHCKEMPLACE("add", FUNC::ADD, Func);
+        CHCKEMPLACE("sub", FUNC::SUB, Func);
+        CHCKEMPLACE("jump", FUNC::JMP, Func);
+
     }
 
     void RegMapFilling()
     {
-        RegMap.emplace("ax", REG::AX);
-        RegMap.emplace("bx", REG::BX);
-        RegMap.emplace("cx", REG::CX);
-        RegMap.emplace("dx", REG::DX);
+        CHCKEMPLACE("ax", REG::AX, Reg);
+        CHCKEMPLACE("bx", REG::BX, Reg);
+        CHCKEMPLACE("cx", REG::CX, Reg);
+        CHCKEMPLACE("dx", REG::DX, Reg);
     }
+
+#undef CHCKEMPLACE
 };
 
 class compiler{
 public:
 
-    std::string buf_;
-    std::vector<std::string>* tokenbuf_;
-    maps my_maps;
+    std::string buf_;        //буффер строк
+    std::vector<std::string> tokenbuf_;      //вектор токенов
+    std::vector<transtoken> transbuf_;      //вектор токенов трансляции
+    maps my_maps_;
 
 
     compiler():
     buf_(),
-    tokenbuf_(nullptr),
-    my_maps()
+    tokenbuf_(),
+    my_maps_()
     {}
 
     ~compiler()
-    {
-        if(tokenbuf_)
-            delete tokenbuf_;
-
-        tokenbuf_ = nullptr;
-    }
+    {}
 
     void ReadAsmCode()
     {
@@ -102,22 +162,19 @@ public:
         rewind(file);
 
         buf_.resize(strsize, '\0');
-
         fread(&buf_[0], strsize, sizeof(char), file);
         buf_.push_back('\n');
 
         fclose(file);
     }
 
+#define CATCH catch(std::exception& exc)\
+                {\
+                    std::cout<< exc.what() << "in function: " << __PRETTY_FUNCTION__ << "line: " << __LINE__;\
+                }
+
     void CreateTokens()
     {
-        tokenbuf_ = new(std::nothrow) std::vector<std::string>; int line = __LINE__;
-        if(!tokenbuf_)
-        {
-            std::cout << '\n' << "Can't allocate mem in function: " << __PRETTY_FUNCTION__ << " line:" << line;
-            return;
-        }
-
         std::string token;
         int i = 0;
 
@@ -134,8 +191,12 @@ public:
 
             if(token.empty() == 0)
             {
-                tokenbuf_ -> push_back(token);
-                token.erase();
+                try {
+                    tokenbuf_.push_back(token);
+                    token.erase();
+                }
+
+                CATCH
             }
 
             if((buf_[i] == ';') && (i < buf_.size()))
@@ -148,10 +209,63 @@ public:
         }
     }
 
-    void Translation() // по карте создает структурки с флажком что это\
-                                                                       функция, перменная, регистр
+    void Translation()
     {
+        transtoken transtkn('0', 0);
 
+        for(auto it = tokenbuf_.begin(); it < tokenbuf_.end(); it++)
+        {
+            auto FuncIter = my_maps_.FuncMap.find(*it);
+            auto RegIter = my_maps_.RegMap.find(*it);
+
+            if(FuncIter != my_maps_.FuncMap.end() || RegIter != my_maps_.RegMap.end()) {
+
+                if(FuncIter == my_maps_.FuncMap.end()){
+
+                    transtkn.set('f', FuncIter -> second);
+
+                    try {
+                        transbuf_.push_back(transtkn);
+                    }
+
+                    CATCH
+                }
+
+                else{
+
+                    transtkn.set('r', RegIter -> second);
+
+                    try {
+                        transbuf_.push_back(transtkn);
+                    }
+
+                    CATCH
+                }
+            }
+
+            else{
+                int notanumber = 0;
+                int number = string_to_int(*it, notanumber);
+
+                if(notanumber == 0)
+                {
+                    transtkn.set('n', number);
+
+                    try{
+                        transbuf_.push_back(transtkn);
+                    }
+
+                    CATCH
+                }
+
+                else{
+                    std::cout << "syntactic error: " << *it << "!!!!\n";
+                }
+            }
+        }
     }
 
 };
+
+#undef CATCH
+
