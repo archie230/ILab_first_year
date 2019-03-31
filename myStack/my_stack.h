@@ -59,6 +59,7 @@ public:
         catch (const std::exception& exc)
         {
             cout << "FUNC stack.push():" << exc.what();
+            return;
         }
 
         if (size_ == capacity_) {
@@ -105,6 +106,7 @@ public:
         catch (const std::exception& exc)
         {
             cout << "FUNC stack.pop():" << exc.what();
+            return;
         }
 
         if (size_ > 0) {
@@ -121,6 +123,7 @@ public:
         catch (const std::exception& exc)
         {
             cout << "FUNC stack.toppop():" << exc.what();
+            return;
         }
 
         if (size_ > 0) {
@@ -139,6 +142,7 @@ public:
         catch (const std::exception& exc)
         {
             cout << "FUNC stack.mul():" << exc.what();
+            return;
         }
 
         if (size_ == 1) {   //как должно работать умножение с одним элементом в стеке?
@@ -162,6 +166,7 @@ public:
         catch (const std::exception& exc)
         {
             cout << "FUNC stack.div():" << exc.what();
+            return;
         }
 
         if (size_ == 1) {     //спросить про то как должно работать деление когда один элемент в стеке
@@ -186,6 +191,7 @@ public:
         catch (const std::exception& exc)
         {
             cout << "FUNC stack.add():" << exc.what();
+            return;
         }
 
         if (size_ == 1) {   //как должно работать сложенние с одним элементом в стеке?
@@ -209,6 +215,7 @@ public:
         catch (const std::exception& exc)
         {
             cout << "FUNC stack.sub():" << exc.what();
+            return;
         }
 
         if (size_ == 1) {   //как должно работать сложенние с одним элементом в стеке?
