@@ -1,0 +1,8 @@
+:go
+push 7
+push 8
+mul
+:lol
+jump go
+jump lol
+:lol
