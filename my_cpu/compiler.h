@@ -782,7 +782,7 @@ public:
 
                 default:
                 {
-                    tokenbuf_[ip].err_dump();
+                    transbuf_[ip].err_dump();
                     return ERRS::ERRCODE;
                 }
 
