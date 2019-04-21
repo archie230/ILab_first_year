@@ -335,6 +335,11 @@ public:
                     return ERRS::ERRCODE;
                 }
 
+                if(FOOMAP.find(tokenbuf_[ip+1].str_) != FOOMAP.end())
+                {
+                    std::cout << "met redefenition of function: " << tokenbuf_[ip+1].str_ << " line:" << tokenbuf_[ip+1].line_ << std::endl;
+                    return ERRS::ERRCODE;
+                }
 
                 if(!FOOMAP.emplace(tokenbuf_[ip+1].str_, ip - 2*funcnum - lblsnum).second) {
                     std::cout << "Can't emplace in AsmFuncMap: func " << __PRETTY_FUNCTION__ << ", line " << __LINE__ << std::endl;
