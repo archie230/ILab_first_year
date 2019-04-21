@@ -244,6 +244,8 @@ public:
 
         return 0;
     }
+#undef DO
+    
 
     int ReadAsmCode() {
         FILE *file = fopen("ASM.txt", "r"); int line = __LINE__;
@@ -909,14 +911,21 @@ public:
 
     bool inspectJUMP(int ip)
     {
-        return transbuf_[ip + 1].code_ != LBL ? false : true;
+        if(!transbuf_[ip + 1].code_ == LBL)
+            return false;
+
+        else return true;
     }
 
 
     bool inspectCALL(int ip)
     {
-        return transbuf_[ip + 1].code_ != ASM_FUNC ? false : true;
+        if(!transbuf_[ip + 1].code_ == ASM_FUNC)
+            return false;
+
+        else return true;
     }
+
 
 
 
