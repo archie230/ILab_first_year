@@ -582,7 +582,7 @@ public:
                     Restore();
                     break;
 
-                CASE("Cleare"):
+                CASE("Clear"):
                     tree_ -> Clear();
 
                 CASE("Descrpt"): {
