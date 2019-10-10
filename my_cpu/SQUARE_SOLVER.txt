@@ -1,0 +1,92 @@
+;#SQUARE SOLVER#
+;ax^2+bx+c=0
+;a in ax register
+;b in bx register
+;c in cx register
+;################
+func sqr_solver
+push ax
+push 0
+je solve_linear
+
+call count_discriminant
+push bx
+push -1
+mul
+push dx
+add
+push ax
+push 2
+mul
+div
+pop ox
+out
+
+push bx
+push -1
+mul
+push dx
+sub
+push ax
+push 2
+mul
+div
+pop ox
+out
+
+jmp to_end
+
+:solve_linear
+call linear_solver
+
+:to_end
+ret
+;################
+
+;#LINEAR SOLVER#
+; bx+c=0
+; b in bx register
+; c in cx register
+;################
+func linear_solver
+push cx
+push bx
+div
+push -1
+mul
+pop ox
+out
+ret
+;################
+
+;#COUNT DISCRIMINANT#
+; D = sqrt(b^2 - 4ac)
+; b in bx register
+; a in ax register
+; c in cx register
+; D would be in dx register
+;################
+func count_discriminant
+push bx
+push bx
+mul
+push 4
+push ax
+push cx
+mul
+mul
+sub
+sqrt
+pop dx
+ret
+;################
+
+main
+int ;enter ax
+int ;enter bx
+int ;enter cx
+pop cx
+pop bx
+pop ax
+call sqr_solver
+end

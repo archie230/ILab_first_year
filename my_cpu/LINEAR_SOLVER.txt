@@ -1,0 +1,18 @@
+func linear_solver
+push bx
+push ax
+div
+push -1
+mul
+pop ox 
+out
+ret
+
+main
+int 
+int
+pop bx
+pop ax
+call linear_solver
+out
+end

@@ -1,0 +1,33 @@
+;#FACTORIAL#
+;a factorial
+;a in ax and bx
+;##############
+func factorial
+push ax
+push 1
+ja do_factorial
+jmp end_factorial
+:do_factorial
+push ax
+push 1
+sub
+pop ax
+push bx
+push ax
+mul
+pop bx
+call factorial
+
+:end_factorial
+ret
+
+main
+int
+pop ax
+push ax
+pop bx
+call factorial
+push bx
+pop ox
+out
+end

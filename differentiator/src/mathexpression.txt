@@ -1,0 +1,1 @@
+log(5,sinx)^cosx+sh(arcctg(x^2))

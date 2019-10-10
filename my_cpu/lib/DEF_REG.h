@@ -1,0 +1,7 @@
+DEF_REG(AX, 28, "ax")
+DEF_REG(BX, 29, "bx")
+DEF_REG(CX, 30, "cx")
+DEF_REG(DX, 31, "dx")
+DEF_REG(OX, 32, "ox")
+DEF_REG(EB, 33, "eb")
+DEF_REG(ES, 34, "es")
