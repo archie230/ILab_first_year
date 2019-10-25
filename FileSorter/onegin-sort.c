@@ -1,4 +1,4 @@
-#pragma once
+#include "onegin-sort.h"
 //______________________________________________________________________________________________________________________
 /** \brief This func reading text from file
  * @param N_symbols 
