@@ -36,5 +36,3 @@ int comp_ryphm(const void*, const void*);
 void sort_andwrite(string** txt, int N_lines, int (*comp) (const void* x1, const void* x2));
 
 void write_originaltxt(char***, int);
-
-#include "onegin-sort.c"
